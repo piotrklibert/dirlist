@@ -1,0 +1,7 @@
+nimcache
+*.o
+*.n
+*.cmo
+*.cmx
+*.cmi
+dylan

@@ -1,0 +1,40 @@
+touch main.haxe
+haxe -neko -main HelloWorld
+haxe -cpp -main HelloWorld
+haxelib setup
+sudo haxelib setup
+haxe -cpp -main HelloWorld
+sudo haxelib setup
+haxelib setup
+haxe -cpp -main HelloWorld
+haxelib install hxcpp
+haxe -cpp -main HelloWorld
+haxe -main HelloWorld.hx --interp
+haxe -neko -main HelloWorld.hx --interp
+haxe -neko -main HelloWorld.hx
+haxe -main HelloWorld.hx --interp
+haxe -main HelloWorld --interp
+haxe -main HelloWorld -js
+haxe -main HelloWorld -js out.js
+haxe -main HelloWorld -cpp out
+haxe -main HelloWorld --interp
+haxe -main HelloWorld -cpp out
+haxe -help
+haxe -main HelloWorld -neko out.n
+haxe -main HelloWorld -js out.js
+haxelib install nodejs
+haxe -main HelloWorld -nodejs out.js
+haxe -main HelloWorld -js out.js
+sudo haxelib install nodejs
+haxe -main HelloWorld -js out.js
+haxe -main HelloWorld -js out.js -lib nodejs
+haxe -main HelloWorld --interp
+haxe -main HelloWorld -neko out.n && neko out.n
+haxe -main HelloWorld -neko out.n && time neko out.n
+history 1 | grep haxe
+history 1 | grep haxe | cut -d' ' -f2-100
+history 1 | grep haxe | cut -d' ' -f3-100
+history 1 | grep haxe | cut -d' ' -f1-100
+history 1 | grep haxe | cut -d' ' -f2-100
+history 1 | grep haxe | cut -d' ' -f3-100
+history 1 | grep haxe | cut -d' ' -f4-100
