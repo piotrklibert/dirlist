@@ -1,10 +1,10 @@
 import os
-import os.path as op
+import os.path as P
 
 class File(object):
     @staticmethod
     def new(path):
-        if op.exists(path) and op.isdir(path):
+        if P.exists(path) and P.isdir(path):
             return Dir(path)
         else:
             return File(path)
@@ -17,7 +17,7 @@ class File(object):
 
 class Dir(File):
     def children(self):
-        return map(lambda x: op.join(self.path, x), os.listdir(self.path))
+        return map(lambda x: P.join(self.path, x), os.listdir(self.path))
 
     def descendants(self):
         kids = self.children()
