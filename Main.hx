@@ -5,67 +5,83 @@ import sys.*;
 import haxe.io.Path;
 import haxe.ds.Option;
 
-enum Entry {
-  F(path: String);
-  D(path: String);
+
+// this gives us exhaustiveness checking when `switch`ing on values of this type
+enum EntryKind {
+  File;
+  Dir;
 }
 
+
+class U { // utils
+  public static function print(arg : Dynamic){
+    #if neko
+    trace("uuu!");
+    #else
+    cpp.Lib.println(arg);
+    #end
+  }
+
+  public static function joinPaths(a:String, b:String) : String {
+    return Path.join([a, b]);
+  }
+}
+
+
+
 class Node {
-  public var kind : Entry;
-  public var files(get, null) : Array<Node>;
+  public var kind : EntryKind;
+  public var path : String;
 
-  public function new(p:String) {
-    if( FileSystem.exists(p) && FileSystem.isDirectory(p) ){
-      this.kind = D(p);}
-    else
-      this.kind = F(p);
-  }
+  public function new(path:String) {
+    this.path = path;
 
-  @:op(A < B)
-  public static function cmp(a:Node, b:Node) : Int {
-    var b = a.unwrap() < b.unwrap();
-    return if(b) -1 else 1;
-  }
-
-  public function unwrap() {
-    return switch(this.kind) {
-    case F(p): p;
-    case D(p): p;
+    if( FileSystem.exists(path) && FileSystem.isDirectory(path) ){
+      this.kind = Dir;
     }
+    else
+      this.kind = File;
   }
+
+  // the `files` attribute will have a getter, called `get_files` and no setter
+  public var files(get, null) : Array<Node>;
 
   public function get_files() : Array<Node> {
     switch (this.kind){
-    case F(_):
+    case File:
       return [];
-    case D(path):
+    case Dir:
       return FileSystem
-        .readDirectory(path)
+        .readDirectory(this.path)
         .map(function (x) {
-            return new Node(Path.join([path, x]));
+            return new Node(U.joinPaths(this.path, x));
         });
     }
   }
 
+
+
   public function toString(): String {
-    return this.unwrap();
+    return this.path;
   }
 
 
   public function descendants() : Array<Node> {
     switch(kind) {
-    case F(p):
+    case File:
       return [this];
-    case D(p):
+
+    case Dir:
       var ret = [];
+
       for(el in this.files) {
-        // ret.push(el);
+        // recurse!
         for(child in el.descendants()){
           ret.push(child);
         }
       }
 
-      ret.sort(Node.cmp);
+      ret.sort(Reflect.compare);
 
       return ret;
     }
@@ -80,6 +96,6 @@ class Main {
 
   static public function main():Void {
     for(el in get_files())
-      trace(el);
+      U.print(el);
   }
 }

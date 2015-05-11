@@ -1,36 +1,50 @@
 import os
 import os.path as P
 
-class File(object):
-    @staticmethod
-    def new(path):
-        if P.exists(path) and P.isdir(path):
-            return Dir(path)
-        else:
-            return File(path)
+start = "/home/cji/poligon/comp/"
 
-    def __init__(self, path):
-        self.path = path
+isdir = P.isdir
+ls = lambda path: map(lambda x: P.join(path,x), os.listdir(path))
 
-    def children(self): return []
-    def descendants(self): return []
+def descendants(path, stream):
+    stream.append(path)
+    if isdir(path):
+        map(lambda x: descendants(x, stream), ls(path))
 
-class Dir(File):
-    def children(self):
-        return map(lambda x: P.join(self.path, x), os.listdir(self.path))
+if __name__ == '__main__':
+    l = []
+    descendants(start, l)
+    # print len(l)
+    for x in sorted(l):
+        print x
 
-    def descendants(self):
-        kids = self.children()
-        result = []
 
-        for k in map(File.new, kids):
-            result.append(k.path)
-            result.extend(k.descendants())
+# if False:
+#     # impossibly fast version
+#     class File(object):
+#         @staticmethod
+#         def new(path):
+#             if P.exists(path) and P.isdir(path):
+#                 return Dir(path)
+#             else:
+#                 return File(path)
 
-        return result
+#         def __init__(self, path):
+#             self.path = path
 
-root_path = "/home/cji/poligon/comp/"
+#         def children(self): return []
+#         def descendants(self): return []
 
-print root_path
-for x in sorted(Dir(root_path).descendants()):
-    print x
+#     class Dir(File):
+#         def children(self):
+#             return map(lambda x: P.join(self.path, x), os.listdir(self.path))
+
+#         def descendants(self):
+#             kids = self.children()
+#             result = []
+
+#             for k in map(File.new, kids):
+#                 result.append(k.path)
+#                 result.extend(k.descendants())
+
+#             return result

@@ -8,6 +8,13 @@ const root_path = "/home/cji/poligon/comp/"
 proc shouldBeVisible(fname : string) : bool = fname != "." and fname != ".."
 
 
+iterator chain[T](a:iterator():T, b:iterator():T) : iterator() =
+  for x in a():
+    yield x
+  for x in b():
+    yield x
+
+
 proc ls(path:string): seq[string] =
   var result : seq[string] = @[]
   if not path.dirExists():
