@@ -17,7 +17,7 @@ main-ocamlopt: main.ml
 	ocamlopt -o main-ocamlopt unix.cmxa main.ml
 
 main-nim: main.nim
-	nim c -o=main-nim -d:release -d:static main.nim
+	nim c -o=main-nim -d:release  main.nim
 
 main-dylan: dylan/hello-dylan.dylan dylan/library.dylan dylan/hello-dylan.lid
 	cd $(PWD_DYLAN) && \

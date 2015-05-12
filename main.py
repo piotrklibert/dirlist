@@ -1,7 +1,7 @@
 import os
 import os.path as P
 
-start = "/home/cji/poligon/comp/"
+start = os.getcwd()
 
 isdir = P.isdir
 ls = lambda path: map(lambda x: P.join(path,x), os.listdir(path))

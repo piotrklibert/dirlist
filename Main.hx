@@ -91,7 +91,8 @@ class Node {
 
 class Main {
   static private function get_files() : Array<Node> {
-    return (new Node("/home/cji/poligon/comp/")).descendants();
+    var p = Sys.getCwd();
+    return (new Node(p)).descendants();
   }
 
   static public function main():Void {
