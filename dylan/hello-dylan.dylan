@@ -41,11 +41,14 @@ end;
 
 define function main (name :: <string>, arguments :: <vector>)
     let stream = make(<string-stream>, direction: #"input-output");
-    descendants("/home/cji/poligon/comp/", stream);
-    format-out(stream-contents(stream));
+    descendants(as(<string>, working-directory()), stream);
 
-    // let sorted = sort(remove(d, #f));
-    // map(curry(format-out, "%s\n"), sorted);
+    let s = stream-contents(stream);
+    let s = split-lines(s);
+
+    for(a in map(curry(format-to-string, "%s\n"), sort(s)))
+        format-out("%s", a);
+    end;
 
     exit-application(0);
 end function main;

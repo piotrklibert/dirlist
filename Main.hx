@@ -14,7 +14,7 @@ enum EntryKind {
 
 
 class U { // utils
-  public static function print(arg : Dynamic){
+  public static inline function print(arg : Dynamic){
     #if neko
     trace("uuu!");
     #else
@@ -22,7 +22,7 @@ class U { // utils
     #end
   }
 
-  public static function joinPaths(a:String, b:String) : String {
+  public static inline function joinPaths(a:String, b:String) : String {
     return Path.join([a, b]);
   }
 }
@@ -81,22 +81,28 @@ class Node {
         }
       }
 
-      ret.sort(Reflect.compare);
-
       return ret;
     }
+  }
+
+  public static inline function cmp(a:Node, b:Node) {
+    return Reflect.compare(a.path, b.path);
   }
 }
 
 
+
 class Main {
-  static private function get_files() : Array<Node> {
+  static private inline function get_files() : Array<Node> {
     var p = Sys.getCwd();
     return (new Node(p)).descendants();
   }
 
   static public function main():Void {
-    for(el in get_files())
+    var f = get_files();
+    f.sort(Node.cmp);
+
+    for(el in f)
       U.print(el);
   }
 }

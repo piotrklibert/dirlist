@@ -9,6 +9,8 @@ main.n: Main.hx
 
 main-c: Main.hx
 	haxe -main Main -cpp main-c
+	if [[ -f "../main-haxe-cpp" ]]; then rm ../main-haxe-cpp; fi
+	ln -s $(PWD)/main-c/Main $(PWD)/main-haxe-cpp
 
 main-ocaml: main.ml
 	ocamlc unix.cma main.ml -o main-ocaml
@@ -17,11 +19,11 @@ main-ocamlopt: main.ml
 	ocamlopt -o main-ocamlopt unix.cmxa main.ml
 
 main-nim: main.nim
-	nim c -o=main-nim -d:release  main.nim
+	nim c -o=main-nim -d:release --opt:speed main.nim
 
 main-dylan: dylan/hello-dylan.dylan dylan/library.dylan dylan/hello-dylan.lid
 	cd $(PWD_DYLAN) && \
-	rm ../main-dylan && \
+	if [[ -f "../main-dylan" ]]; then rm ../main-dylan; fi && \
 	OPEN_DYLAN_USER_REGISTRIES="$(PWD_DYLAN)/registry:$(PWD_DYLAN)/ext/http/registry" \
 		dylan-compiler -build hello-dylan && \
 	bash -c 'if [ -f "$(PWD)" ]; then rm $(PWD)/main-dylan else 1; fi;' && \
@@ -32,10 +34,10 @@ clean:
 	rm main-dylan main.n main-ocaml main-nim
 
 
-MAINS = ./main-haxe-cpp ./main-dylan ./main-nim ./main-ocaml ./main-ocamlopt ./main-haxe-neko ./main-py
+MAINS = ./main-haxe-cpp ./main-dylan ./main-nim ./main-ocaml ./main-ocamlopt ./main-haxe-neko ./main-py ./main-cpp
 
 .ONESHELL:
 perf:
 	for x in $(MAINS); do
-		echo $$x " :::" ;#$$(time ./$$x >/dev/null) ;
+		time ./$$x >/dev/null;
 	done
