@@ -1,54 +1,51 @@
-# -*- mode: nim-mode -*-
+import sets
 import os                       # filesystem-related stuff
 import algorithm                # sorting
 
-proc getcwd(cstring, int):cstring{. importc: "getcwd", header: "<unistd.h>" .}
-var buf = ""
-var root_path = $getcwd(buf, 40)
+proc getcwd(cstring, int):cstring {. importc: "getcwd", header: "<unistd.h>" .}
 
-proc shouldBeVisible(fname : string) : bool = fname != "." and fname != ".."
+var buf = ""
+let root_path = $getcwd(buf, 40)
+
+proc isRealPath(fname : string) : bool = fname != "." and fname != ".."
+
 
 proc ls(path:string): seq[string] =
-  var result : seq[string] = @[]
+  var result = newSeq[string]()
   if not path.dirExists():
-    return result
+    return @[]
 
-  for kind, subpath  in walkDir(path):
+  for kind, subpath in walkDir(path):
     let fname = subpath.extractFilename()
-    if fname.shouldBeVisible and not result.contains(fname):
+    if fname.isRealPath:
       result.add(subpath)
 
   return result
 
 
-proc unionSeqs[T](a:seq[T], b:seq[T]) : seq[T] =
-  var result : seq[T] = a
-  for x in items(a & b):
-    if not result.contains(x):
-      result.add(x)
-  return result
-
-
-proc descendants(root: string) : seq[string] =
+proc descendants(root: string, output : var seq[string]) =
   var
-    stack = ls(root)
-    result : seq[string] = @[]
+    toTest = @[root]
+    current = ""
 
-  if len(stack) == 0:
-    return @[root]
+  while len(toTest) > 0:
+    current = toTest[0]
+    output.add(current)
 
-  for el1 in items(stack.map(descendants)):
-    for el2 in items(el1): # for option-like unwrapping
-      result.add(el2)
-
-  return stack.unionSeqs(result)
+    toTest.del(0)
+    toTest.add(ls(current))
 
 
 ################################################################################
 
-var flist = descendants(root_path)
-algorithm.sort(flist, cmp)
+var dbuf : seq[string] = @[]
 
-echo root_path
-for el in items(flist):
+descendants(root_path, dbuf)
+algorithm.sort(dbuf, cmp)
+
+for el in items(dbuf):
   echo el
+
+
+# var d = opendir("/home/cji")
+# var ff = readdir(d)

@@ -5,3 +5,4 @@ nimcache
 *.cmx
 *.cmi
 dylan
+main-c

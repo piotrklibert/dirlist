@@ -2,15 +2,18 @@ SHELL = zsh
 PWD = $(shell pwd)
 PWD_DYLAN = $(PWD)/dylan/
 
-all: main.n main-ocaml main-nim main-dylan main-c main-ocamlopt
+all: main.n main-c main-ocaml main-ocamlopt main-nim main-dylan main-cpp
 
 main.n: Main.hx
 	haxe -main Main -neko main.n
 
-main-c: Main.hx
+main-haxe-cpp: Main.hx
 	haxe -main Main -cpp main-c
-	if [[ -f "../main-haxe-cpp" ]]; then rm ../main-haxe-cpp; fi
+	if [[ -f "$(PWD)/main-haxe-cpp" ]]; then rm $(PWD)/main-haxe-cpp; fi
 	ln -s $(PWD)/main-c/Main $(PWD)/main-haxe-cpp
+
+main-cpp: main.cpp
+	g++ -L"/usr/lib64" --std=c++11 -O2 -o main-cpp main.cpp
 
 main-ocaml: main.ml
 	ocamlc unix.cma main.ml -o main-ocaml
