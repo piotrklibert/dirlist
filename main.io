@@ -4,8 +4,11 @@ Sequence isRealPath := method(
 
 Sequence isDir := method(
     ret := false
-    try(Directory with(self) items; ret := true
-    )catch(Error, ret := false)
+    try(
+        Directory with(self) items; ret := true
+    ) catch(Error,
+        ret := false
+    )
     ret
 )
 
@@ -24,6 +27,5 @@ descendants := method(dir,
     if(dir isDir,  ls(dir) foreach(x, descendants(x) foreach(v, res append(v))))
     res
 )
-
 
 descendants(Directory with("/home/cji/poligon/comp/")) map(path) sort foreach(println)

@@ -5,18 +5,11 @@ import sys.*;
 import haxe.io.Path;
 import haxe.ds.Option;
 
-
-// this gives us exhaustiveness checking when `switch`ing on values of this type
-enum EntryKind {
-  File;
-  Dir;
-}
-
-
-class U { // utils
+// utils; the name is so short for convenience when calling them
+class U {
   public static inline function print(arg : Dynamic){
     #if neko
-    trace("uuu!");
+    Sys.println(arg);
     #else
     cpp.Lib.println(arg);
     #end
@@ -27,24 +20,29 @@ class U { // utils
   }
 }
 
+enum EntryKind {File; Dir;}
+// A filesystem entry can only be File or Dir. We can use `switch` on values of
+// this type - compiler will warn us if we forget to handle one of those
+// (exhaustiveness checking).
 
 
 class Node {
   public var kind : EntryKind;
   public var path : String;
+  // the `files` attribute will have a getter, called `get_files` and no setter
+  public var files(get, null) : Array<Node>;
+
+  public function toString(): String {return this.path;}
+  public static inline function cmp(a:Node, b:Node) { return Reflect.compare(a.path, b.path); }
 
   public function new(path:String) {
     this.path = path;
-
-    if( FileSystem.exists(path) && FileSystem.isDirectory(path) ){
+    if(FileSystem.exists(path) && FileSystem.isDirectory(path))
       this.kind = Dir;
-    }
     else
       this.kind = File;
   }
 
-  // the `files` attribute will have a getter, called `get_files` and no setter
-  public var files(get, null) : Array<Node>;
 
   public function get_files() : Array<Node> {
     switch (this.kind){
@@ -58,13 +56,6 @@ class Node {
         });
     }
   }
-
-
-
-  public function toString(): String {
-    return this.path;
-  }
-
 
   public function descendants() : Array<Node> {
     switch(kind) {
@@ -84,12 +75,7 @@ class Node {
       return ret;
     }
   }
-
-  public static inline function cmp(a:Node, b:Node) {
-    return Reflect.compare(a.path, b.path);
-  }
 }
-
 
 
 class Main {
@@ -98,7 +84,7 @@ class Main {
     return (new Node(p)).descendants();
   }
 
-  static public function main():Void {
+  static public function main() : Void {
     var f = get_files();
     f.sort(Node.cmp);
 

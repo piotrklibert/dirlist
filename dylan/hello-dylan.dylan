@@ -1,21 +1,40 @@
 Module: hello-dylan
 Synopsis: A walkfiles(tm) implementation for Dylan
-Author: cji
+Author: Piotr Klibert
 
-define constant fmt = curry(format-to-string, "%s");
-define inline method \+(string1 :: <string>, string2 :: <string> ) => (result :: <string>)
+define constant fmt = format-to-string("%s", _);
+
+define inline method \+(string1 :: <string>,
+                        string2 :: <string> ) => (result :: <string>)
     concatenate(string1, string2);
 end;
+
 define inline method is-dir?( dir-path )
     file-exists?(dir-path) & file-type(dir-path) = #"directory";
 end;
 
-define inline method ls(dir-path :: <string>) => (files :: <vector>)
-    let res = make(<stretchy-vector>);
+// define macro lambda
+//     { lambda (?:name) ?b:body end }
+//         => { local method (?name) ?b end }
+// end macro lambda;
+define macro lambda
+    {lambda (?=name, ...) ?body end }
+        => { method (?name, ...) ?body end}
+end macro lambda;
 
-    local method suffix (kind)
-              if(kind = #"directory") "/" else "" end
-          end;
+define inline method ls(dir-path :: <string>) => (files :: <vector>)
+    let res = make(<stretchy-vector>); // `make` is the same as `new` in eg. JS
+                                       // `<stretchy-vector>` is a common resizable container class
+
+    let ress = lambda (x, b) x+1; end;
+
+    ress(1,2);
+
+    exit-application(0);
+
+
+
+    local method suffix (kind) if(kind = #"directory") "/" else "" end end;
 
     local method gather-files (path, fname, kind)
             let file-path = fmt(path) + fmt(fname) + suffix(kind);

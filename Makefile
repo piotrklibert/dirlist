@@ -15,6 +15,9 @@ main-haxe-cpp: Main.hx
 main-cpp: main.cpp
 	g++ -L"/usr/lib64" --std=c++11 -O2 -o main-cpp main.cpp
 
+main-rkt: main.rkt
+	raco exe -o main-rkt main.rkt
+
 main-ocaml: main.ml
 	ocamlc unix.cma main.ml -o main-ocaml
 
@@ -37,7 +40,7 @@ clean:
 	rm main-dylan main.n main-ocaml main-nim
 
 
-MAINS = ./main-haxe-cpp ./main-dylan ./main-nim ./main-ocaml ./main-ocamlopt ./main-haxe-neko ./main-py ./main-cpp
+MAINS = ./main-haxe-cpp ./main-dylan ./main-nim ./main-ocaml ./main-ocamlopt ./main-haxe-neko ./main-py ./main-cpp ./main-rkt
 
 .ONESHELL:
 perf:
