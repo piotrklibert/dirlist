@@ -6,3 +6,4 @@ nimcache
 *.cmi
 dylan
 main-c
+/main.pyc

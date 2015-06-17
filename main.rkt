@@ -13,4 +13,4 @@
 (module+ main
   (define path (current-directory))
   (for ([el (sort (map path->string (descendants path)))])
-    (displayln "asd")))
+    (displayln el)))
